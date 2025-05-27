@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau de bord XAG/EUR</title>
+  <style>
+    body { background: #121212; color: #eee; font-family: sans-serif; padding: 1em; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+    th, td { border: 1px solid #444; padding: 8px; text-align: center; }
+    th { background: #222; }
+  </style>
+</head>
+<body>
+  <h1>📈 Tableau de bord XAG/EUR</h1>
+  <div id="analysis"></div>
+  <table id="signals"></table>
+
+  <script>
+    fetch("data.json")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("analysis").innerHTML = `
+          <p><strong>Analyse :</strong> ${data.analysis}</p>
+          <p><strong>Recommandation :</strong> ${data.recommendation}</p>
+          <p><strong>Dernière mise à jour :</strong> ${data.last_update}</p>`;
+        
+        let html = "<tr><th>Type</th><th>Entrée</th><th>TP</th><th>SL</th><th>Commentaire</th></tr>";
+        data.signals.forEach(sig => {
+          html += `<tr><td>${sig.type}</td><td>${sig.entry}</td><td>${sig.tp}</td><td>${sig.sl}</td><td>${sig.comment}</td></tr>`;
+        });
+        document.getElementById("signals").innerHTML = html;
+      });
+  </script>
+</body>
+</html>
