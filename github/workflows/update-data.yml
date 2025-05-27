@@ -1,0 +1,50 @@
+name: Mise à jour quotidienne de data.json
+
+on:
+  schedule:
+    - cron: '45 10 * * *'  # Tous les jours à 10h45 UTC
+  workflow_dispatch:        # Lancer manuellement si besoin
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le dépôt
+        uses: actions/checkout@v3
+
+      - name: Générer data.json complet
+        run: |
+          echo '{
+            "analysis": "Le marché XAG/EUR montre une volatilité modérée ce matin, avec une tendance légèrement haussière.",
+            "recommendation": "Acheter sur repli vers 29.40€ avec objectif à 30.90€.",
+            "last_update": "'$(date "+%d %B %Y à %H:%M")'",
+            "news": [
+              "L'euro reste stable face au dollar après des données d'inflation faibles.",
+              "La BCE maintient sa politique monétaire inchangée.",
+              "L'argent bénéficie de la reprise industrielle en Chine.",
+              "La demande photovoltaïque continue de soutenir les métaux précieux.",
+              "Les tensions géopolitiques augmentent l'intérêt pour les actifs refuges."
+            ],
+            "signals": [' > data.json
+
+          for i in {1..10}
+          do
+            ENTRY=$(awk -v min=29.30 -v max=29.60 'BEGIN{srand(); printf "%.2f", min+rand()*(max-min)}')
+            TP=$(awk -v e=$ENTRY 'BEGIN{printf "%.2f", e+1.50}')
+            SL=$(awk -v e=$ENTRY 'BEGIN{printf "%.2f", e-0.50}')
+            TYPE=$([ $((RANDOM % 2)) -eq 0 ] && echo "Achat" || echo "Vente")
+            COMMENT="Signal $i automatique"
+            echo "{\"type\": \"$TYPE\", \"entry\": $ENTRY, \"tp\": $TP, \"sl\": $SL, \"comment\": \"$COMMENT\"}," >> data.json
+          done
+
+          # Supprimer la dernière virgule et fermer le tableau JSON
+          sed -i '$ s/},/}/' data.json
+          echo "]}" >> data.json
+
+      - name: Valider et envoyer
+        run: |
+          git config user.name "AutoBot"
+          git config user.email "auto@bot.com"
+          git add data.json
+          git commit -m "Mise à jour automatique quotidienne avec analyse, news et signaux"
+          git push
