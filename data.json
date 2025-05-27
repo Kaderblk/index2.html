@@ -1,0 +1,10 @@
+{
+  "analysis": "Le marché XAG/EUR montre une légère tendance haussière.",
+  "recommendation": "Acheter si support 29.40 tient.",
+  "last_update": "27 mai 2025 à 10h45",
+  "signals": [
+    {"type": "Achat", "entry": 29.40, "tp": 30.90, "sl": 28.90, "comment": "Matin"},
+    {"type": "Vente", "entry": 29.45, "tp": 27.95, "sl": 29.95, "comment": "Tendance"},
+    {"type": "Achat", "entry": 29.38, "tp": 30.88, "sl": 28.88, "comment": "RSI"}
+  ]
+}
